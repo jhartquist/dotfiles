@@ -6,3 +6,4 @@
 !.gitexcludes
 !.gitconfig
 !.tmux.conf
+!.config/nvim/init.lua
