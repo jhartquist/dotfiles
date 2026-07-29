@@ -39,6 +39,7 @@
     dock.persistent-others = [ ];  # no folders/stacks on the right side
     menuExtraClock.ShowSeconds = true;     # menu bar clock with seconds
     controlcenter.BatteryShowPercentage = true;
+    controlcenter.Sound = true;            # always show Sound in menu bar
     finder.AppleShowAllFiles = true;       # show hidden files; relaunch Finder to see it
     finder.FXPreferredViewStyle = "Nlsv";  # list view
     finder.CreateDesktop = false;          # no icons on the desktop
