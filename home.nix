@@ -5,7 +5,6 @@ let
 in
 {
   home.username = user;
-  home.homeDirectory = "/Users/${user}";
   home.stateVersion = "26.05";
 
   home.packages = with pkgs; [
@@ -13,8 +12,10 @@ in
     fd        # fast find
     fzf       # fuzzy finder
     eza       # modern ls
+    bat       # cat with syntax highlighting
     jq        # json on the command line
     just      # task runner (ships its own zsh completions)
+    bacon     # background rust code checker
     lazygit   # git TUI
     neovim
 
@@ -52,7 +53,11 @@ in
     nix-direnv.enable = true;
   };
 
-  home.sessionPath = [ "$HOME/.local/bin" ];
+  # Appended to PATH, so nix-owned tools always shadow same-named installs.
+  home.sessionPath = [
+    "$HOME/.local/bin"
+    "$HOME/.cargo/bin"   # `cargo install`ed tools
+  ];
 
   programs.zsh = {
     enable = true;
@@ -124,15 +129,6 @@ in
       "**/CLAUDE.local.md"
       ".DS_Store"
     ];
-  };
-
-  # All SSH auth goes through 1Password's agent — keys live in the vault
-  # (biometric-gated, synced), never as files in ~/.ssh.
-  programs.ssh = {
-    enable = true;
-    enableDefaultConfig = false;
-    settings."*".IdentityAgent =
-      ''"~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"'';
   };
 
   # Syntax-highlighted diffs; was the old lazygit/jj pager.

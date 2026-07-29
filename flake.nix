@@ -31,9 +31,18 @@
             # Pre-existing files in the way get moved aside, not a failed switch.
             home-manager.backupFileExtension = "hm-backup";
             home-manager.extraSpecialArgs = { inherit user; };
-            home-manager.users.${user} = import ./home.nix;
+            home-manager.users.${user}.imports = [ ./home.nix ./home-darwin.nix ];
           }
         ];
       };
+
+      # Ubuntu deep-learning box: system stays vanilla apt (CUDA drivers etc.),
+      # nix owns only the user environment. Applied by setup-ubuntu.sh.
+      homeConfigurations."${user}@ubuntu" =
+        home-manager.lib.homeManagerConfiguration {
+          pkgs = nixpkgs.legacyPackages.x86_64-linux;
+          extraSpecialArgs = { inherit user; };
+          modules = [ ./home.nix ./home-linux.nix ];
+        };
     };
 }
