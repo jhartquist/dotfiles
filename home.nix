@@ -200,6 +200,14 @@ in
   home.file.".claude/statusline.sh".source =
     config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/.claude/statusline.sh";
 
+  # Agent skills, managed by `npx skills` — content in .agents/skills, a layer
+  # of relative symlinks in .claude/skills. Both vendored in the repo; the
+  # relative links resolve within it, and `npx skills` writes flow back here.
+  home.file.".agents".source =
+    config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/.agents";
+  home.file.".claude/skills".source =
+    config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/.claude/skills";
+
   # One instruction file for every agent CLI.
   home.file.".claude/CLAUDE.md".source =
     config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/AGENTS.md";
