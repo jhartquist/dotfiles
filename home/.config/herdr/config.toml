@@ -25,5 +25,5 @@ split_horizontal = 'prefix+"'
 new_tab = "prefix+c"
 
 # tmux: prefix+( / prefix+) cycle sessions - the workspace analog here.
-previous_workspace = "prefix+("
-next_workspace = "prefix+)"
+previous_workspace = "prefix+)"
+next_workspace = "prefix+("
