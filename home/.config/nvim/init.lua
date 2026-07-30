@@ -78,6 +78,7 @@ vim.pack.add({
 require("which-key").setup()
 require("which-key").add({
   { "<leader>b", group = "buffers" },
+  { "<leader>c", group = "code" },
   { "<leader>q", group = "session" },
 })
 
@@ -126,9 +127,28 @@ vim.lsp.config("lua_ls", {
   settings = { Lua = { diagnostics = { globals = { "vim", "Snacks" } } } },
 })
 
--- 0.11+ ships LSP keymaps by default: grn rename, gra code action,
--- grr references, gri implementation, gO document symbols, K hover.
+-- pyright doesn't auto-detect venvs; use <root>/.venv (uv-style) when present
+vim.lsp.config("pyright", {
+  before_init = function(_, config)
+    local python = (config.root_dir or vim.fn.getcwd()) .. "/.venv/bin/python"
+    if vim.uv.fs_stat(python) then
+      config.settings.python = config.settings.python or {}
+      config.settings.python.pythonPath = python
+    end
+  end,
+})
+
+-- 0.11+ ships gr* chord keymaps by default (grn/gra/grr/gri); the maps below
+-- replace them, and deleting the chords lets a bare `gr` fire without waiting
+-- on timeoutlen. gO document symbols and K hover remain.
+pcall(vim.keymap.del, "n", "grn")
+pcall(vim.keymap.del, { "n", "x" }, "gra")
+pcall(vim.keymap.del, "n", "grr")
+pcall(vim.keymap.del, "n", "gri")
 vim.keymap.set("n", "gd", vim.lsp.buf.definition, { desc = "goto definition" })
+vim.keymap.set("n", "gr", function() require("fzf-lua").lsp_references() end, { desc = "references" })
+vim.keymap.set({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, { desc = "code action" })
+vim.keymap.set("n", "<leader>cr", vim.lsp.buf.rename, { desc = "rename symbol" })
 
 vim.diagnostic.config({
   virtual_text = true,
@@ -144,7 +164,7 @@ require("copilot").setup({
 })
 
 vim.g.copilot_enabled = true
-vim.keymap.set("n", "<leader>c", function()
+vim.keymap.set("n", "<leader>a", function()
   vim.g.copilot_enabled = not vim.g.copilot_enabled
   vim.notify("copilot " .. (vim.g.copilot_enabled and "on" or "off"))
 end, { desc = "toggle copilot" })
