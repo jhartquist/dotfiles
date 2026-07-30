@@ -124,6 +124,7 @@ in
       name = "John Hartquist";
       email = "john@hartquist.com";
     };
+    settings.init.defaultBranch = "main";
     ignores = [
       "**/.claude/settings.local.json"
       "**/CLAUDE.local.md"

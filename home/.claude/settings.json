@@ -1,17 +1,6 @@
 {
   "includeCoAuthoredBy": false,
   "model": "fable",
-  "statusLine": {
-    "type": "command",
-    "command": "~/.claude/statusline.sh"
-  },
-  "enabledPlugins": {
-    "lua-lsp@claude-plugins-official": true
-  },
-  "tui": "fullscreen",
-  "skipDangerousModePermissionPrompt": true,
-  "theme": "dark",
-  "effortLevel": "high",
   "hooks": {
     "SessionStart": [
       {
@@ -45,5 +34,17 @@
         ]
       }
     ]
-  }
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "~/.claude/statusline.sh"
+  },
+  "enabledPlugins": {
+    "lua-lsp@claude-plugins-official": true
+  },
+  "effortLevel": "high",
+  "tui": "fullscreen",
+  "skipDangerousModePermissionPrompt": true,
+  "theme": "dark",
+  "agentPushNotifEnabled": true
 }
