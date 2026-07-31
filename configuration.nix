@@ -49,6 +49,11 @@
     CustomUserPreferences."com.apple.TextInputMenu".visible = false;
   };
 
+  # Never sleep on idle (applies to both battery and AC — systemsetup has no
+  # per-source setting) so long-running agents stay active. The display still
+  # sleeps on its own schedule, and closing the lid still sleeps the machine.
+  power.sleep.computer = "never";
+
   # Swap ⌘ and ⌥ on the external MX Keys ONLY (its Bolt receiver is 0x46d/0xc548),
   # so the physical Alt/Start cluster matches an Apple keyboard's ⌥/⌘ order. Done
   # as a device-scoped hidutil agent rather than nix-darwin's
