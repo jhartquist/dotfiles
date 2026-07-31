@@ -11,10 +11,10 @@ prefix = "ctrl+s"
 
 # tmux: christoomey/vim-tmux-navigator — move between panes with ctrl+h/j/k/l,
 # no prefix needed. (tmux also had prefix h/j/k/l via bind-key select-pane.)
-focus_pane_left = "ctrl+h"
-focus_pane_down = "ctrl+j"
-focus_pane_up = "ctrl+k"
-focus_pane_right = "ctrl+l"
+# focus_pane_left = "ctrl+h"
+# focus_pane_down = "ctrl+j"
+# focus_pane_up = "ctrl+k"
+# focus_pane_right = "ctrl+l"
 
 # tmux: bind % split-window -h  (side-by-side panes, vertical divider)
 split_vertical = "prefix+%"
