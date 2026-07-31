@@ -158,7 +158,14 @@ return {
     opts = {
       indent = { enabled = false },
       scroll = { enabled = false },
-      picker = { sources = { explorer = { hidden = true } } },
+      -- hidden = dotfiles like .env.example; gitignored paths stay excluded
+      picker = {
+        sources = {
+          explorer = { hidden = true },
+          files = { hidden = true },
+          grep = { hidden = true },
+        },
+      },
       zen = {
         toggles = { dim = false, diagnostics = false },
         show = { statusline = false, tabline = false },
