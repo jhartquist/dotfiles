@@ -20,7 +20,7 @@ config.window_decorations = "RESIZE"
 -- RESIZE decorations drop the green button, so bind the standard macOS
 -- fullscreen shortcut. Non-native = instant borderless overlay, no Space.
 config.keys = {
-  { key = "f", mods = "CTRL|CMD", action = wezterm.action.ToggleFullScreen },
+	{ key = "f", mods = "CTRL|CMD", action = wezterm.action.ToggleFullScreen },
 }
 
 return config

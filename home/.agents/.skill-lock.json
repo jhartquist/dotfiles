@@ -6,9 +6,9 @@
       "sourceType": "github",
       "sourceUrl": "https://github.com/kunchenguid/lavish-axi.git",
       "skillPath": "skills/lavish/SKILL.md",
-      "skillFolderHash": "b7eaa632866ba1f7d0b40b08da6ee72c13577841",
+      "skillFolderHash": "17f97414dc67494387dbaa7226bc3956c16ff2e6",
       "installedAt": "2026-07-28T22:04:17.065Z",
-      "updatedAt": "2026-07-28T22:04:17.065Z"
+      "updatedAt": "2026-08-18T16:08:23.705Z"
     },
     "find-skills": {
       "source": "vercel-labs/skills",

@@ -87,7 +87,6 @@
     # herdr: not in nixpkgs 26.05; formula tracks upstream better anyway.
     brews = [ "herdr" ];
     casks = [
-      "claude-code"
       "codex"                  # OpenAI's terminal coding agent
       "google-chrome"
       "wezterm"

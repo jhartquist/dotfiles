@@ -2,6 +2,9 @@
 -- Default options that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/options.lua
 -- Add any additional options here
 
+-- Ruby: Standard (standardrb) owns lint and format, never stock rubocop
+vim.g.lazyvim_ruby_formatter = "standardrb"
+
 -- Line number gutter width (prevents jump at line 10)
 vim.opt.numberwidth = 5
 
