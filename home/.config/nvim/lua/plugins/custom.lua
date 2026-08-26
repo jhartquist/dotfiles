@@ -101,6 +101,11 @@ return {
         opts.servers[name] = opts.servers[name] or {}
         opts.servers[name].before_init = set_venv_python
       end
+
+      -- Ruby: the project's pinned standardrb, not Mason's rubocop
+      opts.servers.rubocop = { enabled = false }
+      opts.servers.standardrb = { cmd = { "bundle", "exec", "standardrb", "--lsp" } }
+      opts.servers.ruby_lsp = { mason = false } -- the mise-installed gem, not Mason's 3.4 build
     end,
   },
 
@@ -158,10 +163,10 @@ return {
     opts = {
       indent = { enabled = false },
       scroll = { enabled = false },
-      -- hidden = dotfiles like .env.example; gitignored paths stay excluded
+      -- hidden = dotfiles like .env.example; explorer also shows gitignored paths
       picker = {
         sources = {
-          explorer = { hidden = true },
+          explorer = { hidden = true, ignored = true },
           files = { hidden = true },
           grep = { hidden = true },
         },

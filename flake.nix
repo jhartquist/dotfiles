@@ -15,7 +15,7 @@
 
   outputs = inputs@{ nixpkgs, nix-darwin, home-manager, nix-homebrew, ... }:
     let
-      user = "john";
+      user = "johnhartquist";
       host = "mac";  # flake label, not the hostname — one config can serve many Macs
     in
     {

@@ -1,4 +1,4 @@
-{ config, pkgs, user, ... }:
+{ config, lib, pkgs, user, ... }:
 
 let
   dotfiles = "${config.home.homeDirectory}/.dotfiles";
@@ -23,6 +23,7 @@ in
     rustup    # rust: manages toolchains/components/targets (not a pinned rustc)
     uv        # python: versions + venvs + packages in one tool
     fnm       # node version manager — owns node; run `fnm install --lts` once
+    mise      # ruby (and anything else with a .tool-versions/.mise.toml)
     pnpm
     bun
     gh        # github cli
@@ -92,6 +93,9 @@ in
 
       eval "$(fnm env --use-on-cd)"    # activate fnm; auto-switch node per .nvmrc on cd
 
+      # mise owns ruby; without this, ruby/bundle fall through to system Ruby
+      eval "$(mise activate zsh)"
+
       # API keys live outside the repo (1Password is the durable copy).
       [ -f ~/private/secrets.zsh ] && source ~/private/secrets.zsh
 
@@ -122,9 +126,14 @@ in
     enable = true;
     settings.user = {
       name = "John Hartquist";
-      email = "john@hartquist.com";
+      email = "john@foam.ai";
     };
     settings.init.defaultBranch = "main";
+    settings.format.pretty = "oneline";
+    settings.log.abbrevCommit = true;
+    settings.alias = {
+      l = "log --oneline";
+    };
     ignores = [
       "**/.claude/settings.local.json"
       "**/CLAUDE.local.md"
@@ -208,6 +217,15 @@ in
     config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/.agents";
   home.file.".claude/skills".source =
     config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/.claude/skills";
+
+  # Claude Code: native installer, not nix/brew, so its self-updater works.
+  # Bootstrap once if missing; after that the binary manages itself.
+  home.activation.installClaudeCode = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    if [ ! -x "$HOME/.local/bin/claude" ]; then
+      PATH="${lib.makeBinPath [ pkgs.curl pkgs.coreutils pkgs.perl ]}:$PATH" \
+        ${pkgs.bash}/bin/bash -c "$(${pkgs.curl}/bin/curl -fsSL https://claude.ai/install.sh)"
+    fi
+  '';
 
   # One instruction file for every agent CLI.
   home.file.".claude/CLAUDE.md".source =
