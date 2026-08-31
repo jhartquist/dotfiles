@@ -85,7 +85,7 @@
     onActivation.cleanup = "zap";
     onActivation.autoUpdate = true;
     # herdr: not in nixpkgs 26.05; formula tracks upstream better anyway.
-    brews = [ "herdr" ];
+    brews = [ "herdr" "act" ];
     casks = [
       "codex"                  # OpenAI's terminal coding agent
       "google-chrome"
