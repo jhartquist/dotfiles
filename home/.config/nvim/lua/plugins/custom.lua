@@ -53,11 +53,36 @@ return {
   },
 
   -----------------------------------------------------------------------------
-  -- TMUX NAVIGATION (uncomment if you use tmux)
+  -- PANE NAVIGATION (tmux)
   -----------------------------------------------------------------------------
   -- Allows Ctrl+h/j/k/l to move between NeoVim and tmux panes seamlessly
-  -- Requires: vim-tmux-navigator in your .tmux.conf
-  { "christoomey/vim-tmux-navigator" },
+  -- Requires: vim-tmux-navigator in your .tmux.conf; nvim maps in keymaps.lua
+  { "christoomey/vim-tmux-navigator", cond = vim.env.TMUX ~= nil },
+
+  -----------------------------------------------------------------------------
+  -- PANE NAVIGATION (herdr)
+  -----------------------------------------------------------------------------
+  -- Same, for herdr: Ctrl+h/j/k/l nav, Alt+h/j/k/l resize, across herdr panes
+  -- and nvim splits. Herdr half: `herdr plugin install lmilojevicc/herdr-splits.nvim`
+  -- plus [[keys.command]] binds in herdr's config.toml.
+  {
+    "lmilojevicc/herdr-splits.nvim",
+    cond = vim.env.HERDR_ENV == "1",
+    event = "VeryLazy",
+    config = function()
+      require("herdr-splits").setup()
+    end,
+    keys = {
+      { "<C-h>", function() require("herdr-splits").move_cursor_left() end, desc = "Navigate left" },
+      { "<C-j>", function() require("herdr-splits").move_cursor_down() end, desc = "Navigate down" },
+      { "<C-k>", function() require("herdr-splits").move_cursor_up() end, desc = "Navigate up" },
+      { "<C-l>", function() require("herdr-splits").move_cursor_right() end, desc = "Navigate right" },
+      { "<M-h>", function() require("herdr-splits").resize_left() end, desc = "Resize left" },
+      { "<M-j>", function() require("herdr-splits").resize_down() end, desc = "Resize down" },
+      { "<M-k>", function() require("herdr-splits").resize_up() end, desc = "Resize up" },
+      { "<M-l>", function() require("herdr-splits").resize_right() end, desc = "Resize right" },
+    },
+  },
 
   -----------------------------------------------------------------------------
   -- COLORSCHEME
