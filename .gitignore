@@ -3,3 +3,6 @@ result
 home/.config/herdr/*.log
 home/.config/herdr/*.sock
 home/.config/herdr/session.json
+home/.config/herdr/plugins.json
+home/.config/herdr/plugins/
+home/.config/herdr/release-notes.json

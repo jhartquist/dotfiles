@@ -28,3 +28,45 @@ new_tab = "prefix+c"
 # tmux: prefix+( / prefix+) cycle sessions - the workspace analog here.
 previous_workspace = "prefix+)"
 next_workspace = "prefix+("
+
+# herdr-splits.nvim: seamless ctrl+h/j/k/l nav + alt+h/j/k/l resize across
+# herdr panes and nvim splits (vim-aware; nvim half in nvim/lua/plugins/custom.lua)
+[[keys.command]]
+key = "ctrl+h"
+type = "plugin_action"
+command = "herdr-splits.nav-left"
+
+[[keys.command]]
+key = "ctrl+j"
+type = "plugin_action"
+command = "herdr-splits.nav-down"
+
+[[keys.command]]
+key = "ctrl+k"
+type = "plugin_action"
+command = "herdr-splits.nav-up"
+
+[[keys.command]]
+key = "ctrl+l"
+type = "plugin_action"
+command = "herdr-splits.nav-right"
+
+[[keys.command]]
+key = "alt+h"
+type = "plugin_action"
+command = "herdr-splits.resize-left"
+
+[[keys.command]]
+key = "alt+j"
+type = "plugin_action"
+command = "herdr-splits.resize-down"
+
+[[keys.command]]
+key = "alt+k"
+type = "plugin_action"
+command = "herdr-splits.resize-up"
+
+[[keys.command]]
+key = "alt+l"
+type = "plugin_action"
+command = "herdr-splits.resize-right"
