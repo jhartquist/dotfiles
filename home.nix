@@ -227,6 +227,18 @@ in
     fi
   '';
 
+  # herdr-splits: herdr half of the seamless pane/split nav plugin (nvim half
+  # pinned in nvim/lazy-lock.json — keep this --ref on the same commit).
+  # Bootstrap once if missing; herdr manages it after that.
+  home.activation.installHerdrSplits = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    herdr=/opt/homebrew/bin/herdr
+    if [ -x "$herdr" ] && ! "$herdr" plugin list 2>/dev/null | grep -qw "herdr-splits"; then
+      "$herdr" plugin install lmilojevicc/herdr-splits.nvim \
+        --ref 94f30cf4e9ac76ddf185a3acd0977be728fa4106 --yes \
+        || echo "herdr-splits install failed; rerun: herdr plugin install lmilojevicc/herdr-splits.nvim"
+    fi
+  '';
+
   # One instruction file for every agent CLI.
   home.file.".claude/CLAUDE.md".source =
     config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/AGENTS.md";
