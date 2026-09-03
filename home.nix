@@ -132,10 +132,11 @@ in
     settings.gpg.format = "ssh";
     settings.commit.gpgsign = true;
     settings.init.defaultBranch = "main";
-    settings.format.pretty = "oneline";
+    # One line per commit: hash, date, author, refs, subject.
+    settings.format.pretty = "%C(auto)%h %C(dim)%as %C(cyan)%an%C(reset)%C(auto)%d %s";
     settings.log.abbrevCommit = true;
     settings.alias = {
-      l = "log --oneline";
+      l = "log";
     };
     ignores = [
       "**/.claude/settings.local.json"
