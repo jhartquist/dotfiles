@@ -127,7 +127,10 @@ in
     settings.user = {
       name = "John Hartquist";
       email = "john@foam.ai";
+      signingkey = "${config.home.homeDirectory}/.ssh/id_ed25519.pub";
     };
+    settings.gpg.format = "ssh";
+    settings.commit.gpgsign = true;
     settings.init.defaultBranch = "main";
     settings.format.pretty = "oneline";
     settings.log.abbrevCommit = true;
