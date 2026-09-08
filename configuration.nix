@@ -85,7 +85,8 @@
     onActivation.cleanup = "zap";
     onActivation.autoUpdate = true;
     # herdr: not in nixpkgs 26.05; formula tracks upstream better anyway.
-    brews = [ "herdr" "act" ];
+    # libyaml: ruby-build (via mise) locates it with `brew --prefix` when compiling ruby.
+    brews = [ "herdr" "act" "libyaml" ];
     casks = [
       "codex"                  # OpenAI's terminal coding agent
       "google-chrome"
