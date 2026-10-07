@@ -8,7 +8,15 @@
   },
   "enabledPlugins": {
     "lua-lsp@claude-plugins-official": true,
-    "mattpocock-skills@claude-plugins-official": true
+    "mattpocock-skills@mattpocock": true
+  },
+  "extraKnownMarketplaces": {
+    "mattpocock": {
+      "source": {
+        "source": "github",
+        "repo": "mattpocock/skills"
+      }
+    }
   },
   "effortLevel": "high",
   "tui": "fullscreen",

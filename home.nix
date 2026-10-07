@@ -207,11 +207,17 @@ in
   home.file.".config/herdr".source =
     config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/.config/herdr";
 
-  # force: settings.json predates home-manager managing it; replace, don't error.
-  home.file.".claude/settings.json" = {
-    source = config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/.claude/settings.json";
-    force = true;
-  };
+  # settings.json has several writers (this repo, Claude Code, plugins like
+  # weave), so it's a plain file, not a link: each switch deep-merges the repo's
+  # keys over it. Repo wins on conflict; machine-local keys survive. mv replaces
+  # a leftover symlink instead of writing through it.
+  home.activation.claudeSettings = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
+    f="$HOME/.claude/settings.json"
+    [ -e "$f" ] || { rm -f "$f"; echo '{}' > "$f"; }
+    ${lib.getExe pkgs.jq} -s '.[0] * .[1]' "$f" "${dotfiles}/home/.claude/settings.json" > "$f.tmp"
+    chmod 600 "$f.tmp"
+    mv "$f.tmp" "$f"
+  '';
   home.file.".claude/statusline.sh".source =
     config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/.claude/statusline.sh";
 
