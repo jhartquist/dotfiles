@@ -1,5 +1,6 @@
 {
   "includeCoAuthoredBy": false,
+  "cleanupPeriodDays": 36500,
   "model": "claude-fable-5-1[1m]",
   "statusLine": {
     "type": "command",
