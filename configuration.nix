@@ -54,11 +54,13 @@
   # sleeps on its own schedule, and closing the lid still sleeps the machine.
   power.sleep.computer = "never";
 
-  # Swap ⌘ and ⌥ on the external MX Keys ONLY (its Bolt receiver is 0x46d/0xc548),
-  # so the physical Alt/Start cluster matches an Apple keyboard's ⌥/⌘ order. Done
-  # as a device-scoped hidutil agent rather than nix-darwin's
+  # Swap ⌘ and ⌥ on the external MX Keys ONLY (via its Logi USB receiver,
+  # 0x46d/0xc548), so the physical Alt/Start cluster matches an Apple keyboard's
+  # ⌥/⌘ order. Done as a device-scoped hidutil agent rather than nix-darwin's
   # system.keyboard.userKeyMapping, because that option is global and would also
   # swap the built-in MacBook keyboard. 0x7000000E3 = left ⌘, 0x7000000E2 = left ⌥.
+  # hidutil settings die with the device, so besides running at login the agent
+  # is re-launched by IOKit every time a matching receiver is plugged in.
   launchd.user.agents.mx-keys-swap-cmd-option.serviceConfig = {
     ProgramArguments = [
       "/usr/bin/hidutil" "property"
@@ -66,6 +68,12 @@
       "--set" ''{"UserKeyMapping":[{"HIDKeyboardModifierMappingSrc":0x7000000E3,"HIDKeyboardModifierMappingDst":0x7000000E2},{"HIDKeyboardModifierMappingSrc":0x7000000E2,"HIDKeyboardModifierMappingDst":0x7000000E3}]}''
     ];
     RunAtLoad = true;
+    LaunchEvents."com.apple.iokit.matching".mx-keys-receiver-attached = {
+      IOProviderClass = "IOUSBHostDevice";
+      idVendor = 1133;   # 0x46d
+      idProduct = 50504; # 0xc548
+      IOMatchLaunchStream = true;
+    };
   };
 
   # nix-homebrew installs and owns Homebrew itself — nothing installs brew
