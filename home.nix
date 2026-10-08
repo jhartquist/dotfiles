@@ -121,7 +121,14 @@ in
     };
   };
 
-  programs.git = {
+  programs.git = let
+    # Pager for log/show: rewrite the cyan author on each commit line to two-letter
+    # initials (like lazygit), then hand off to delta. Git has no initials placeholder;
+    # piped (uncolored) output keeps the full name.
+    logPager = ''
+      perl -pe 's/^(\e\[\d*m[0-9a-f]{7,}\e\[m .*?)\e\[36m([^\e]+)\e\[m/ my @w = split " ", $2; $1 . "\e[36m" . uc(@w > 1 ? substr($w[0],0,1) . substr($w[1],0,1) : substr($w[0],0,2)) . "\e[m" /e' |
+        ${lib.getExe config.programs.delta.package}'';
+  in {
     enable = true;
     settings.user = {
       name = "John Hartquist";
@@ -131,13 +138,14 @@ in
     settings.gpg.format = "ssh";
     settings.commit.gpgsign = true;
     settings.init.defaultBranch = "main";
-    # One line per commit: hash, date, author (padded/truncated to 7), refs, subject.
-    settings.format.pretty = "%C(auto)%h %C(dim)%ad %C(cyan)%<(7,trunc)%an%C(reset)%C(auto)%d %s";
+    # One line per commit: hash, date, author (initials when paged, see logPager), refs, subject.
+    settings.format.pretty = "%C(auto)%h %C(dim)%ad %C(cyan)%an%C(reset)%C(auto)%d %s";
     settings.log.abbrevCommit = true;
     settings.log.date = "format:%Y-%m-%d %H:%M";
-    settings.alias = {
-      l = "log";
-    };
+    settings.alias.l = "log";
+    # programs.delta sets these to plain delta; iniContent is where that lands.
+    iniContent.pager.log = lib.mkForce logPager;
+    iniContent.pager.show = lib.mkForce logPager;
     ignores = [
       "**/.claude/settings.local.json"
       "**/CLAUDE.local.md"
