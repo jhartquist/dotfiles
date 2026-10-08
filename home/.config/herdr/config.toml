@@ -70,3 +70,6 @@ command = "herdr-splits.resize-up"
 key = "alt+l"
 type = "plugin_action"
 command = "herdr-splits.resize-right"
+
+[ui]
+agent_panel_sort = "spaces"
