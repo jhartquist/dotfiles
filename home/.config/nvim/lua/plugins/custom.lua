@@ -26,30 +26,25 @@ return {
       {
         "<leader>ai",
         function()
-          -- deferred so it reads the settled state even when this keypress
-          -- is what lazy-loads the plugin
-          vim.schedule(function()
-            if require("copilot.client").is_disabled() then
-              vim.cmd("Copilot enable")
-              vim.notify("Copilot enabled")
-            else
-              vim.cmd("Copilot disable")
-              vim.notify("Copilot disabled")
-            end
-          end)
+          local copilot = require("copilot")
+          if not copilot.setup_done then
+            copilot.setup(LazyVim.opts("copilot.lua"))
+            vim.notify("Copilot enabled")
+          elseif require("copilot.client").is_disabled() then
+            vim.cmd("Copilot enable")
+            vim.notify("Copilot enabled")
+          else
+            vim.cmd("Copilot disable")
+            vim.notify("Copilot disabled")
+          end
         end,
         desc = "Toggle Copilot",
       },
     },
-    config = function(_, opts)
-      require("copilot").setup(opts)
-      -- start disabled; <leader>ai enables it on demand. Deferred a tick so
-      -- it runs after copilot's own scheduled buffer-attach (avoids a
-      -- "copilot is disabled" warning on startup).
-      vim.schedule(function()
-        vim.cmd("Copilot disable")
-      end)
-    end,
+    -- start disabled: setup() runs on the first <leader>ai. Calling setup()
+    -- then disabling races its scheduled buffer attaches, which warn
+    -- "copilot is disabled".
+    config = function() end,
   },
 
   -----------------------------------------------------------------------------
@@ -165,10 +160,6 @@ return {
   },
 
   -----------------------------------------------------------------------------
-  -- SNACKS.NVIM TWEAKS
-  -----------------------------------------------------------------------------
-  -- Disable indent guides, smooth scroll; configure zen mode
-  -----------------------------------------------------------------------------
   -- CONFORM: Use prettierd for JS/TS, fall back to prettier
   -----------------------------------------------------------------------------
   {
@@ -183,10 +174,35 @@ return {
     },
   },
 
+  -----------------------------------------------------------------------------
+  -- SNACKS.NVIM TWEAKS
+  -----------------------------------------------------------------------------
+  -- Disable indent guides, smooth scroll; configure zen mode
   {
     "snacks.nvim",
     opts = {
       indent = { enabled = false },
+      -- lazygit `e` hides the float instead of quitting (the nvim-remote
+      -- preset sends "q"), so <leader>gg returns to the same spot
+      lazygit = {
+        -- under herdr, Ctrl-hjkl in the float moves to the neighboring herdr
+        -- pane (lazygit's own <c-j>/<c-k>/<c-l> are lost, same as in a plain
+        -- herdr lazygit pane)
+        win = vim.env.HERDR_ENV == "1" and {
+          keys = {
+            nav_h = { "<C-h>", function() require("herdr-splits").move_cursor_left() end, expr = false, mode = "t" },
+            nav_j = { "<C-j>", function() require("herdr-splits").move_cursor_down() end, expr = false, mode = "t" },
+            nav_k = { "<C-k>", function() require("herdr-splits").move_cursor_up() end, expr = false, mode = "t" },
+            nav_l = { "<C-l>", function() require("herdr-splits").move_cursor_right() end, expr = false, mode = "t" },
+          },
+        } or nil,
+        config = {
+          os = {
+            edit = [[nvim --server "$NVIM" --remote-send '<C-\><C-n>:close<CR>' && nvim --server "$NVIM" --remote {{filename}}]],
+            editAtLine = [[nvim --server "$NVIM" --remote-send '<C-\><C-n>:close<CR>' && nvim --server "$NVIM" --remote {{filename}} && nvim --server "$NVIM" --remote-send ':{{line}}<CR>']],
+          },
+        },
+      },
       scroll = { enabled = false },
       -- hidden = dotfiles like .env.example; explorer also shows gitignored paths
       picker = {
