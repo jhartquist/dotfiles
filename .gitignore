@@ -6,3 +6,5 @@ home/.config/herdr/session.json
 home/.config/herdr/plugins.json
 home/.config/herdr/plugins/
 home/.config/herdr/release-notes.json
+home/.claude/skills/synced/
+home/.agents/skills/synced/
