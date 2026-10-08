@@ -16,7 +16,6 @@ in
     jq        # json on the command line
     just      # task runner (ships its own zsh completions)
     bacon     # background rust code checker
-    lazygit   # git TUI
     neovim
 
     # Dev toolchains — these carry over to the Ubuntu box later, too.
@@ -152,10 +151,15 @@ in
     enableGitIntegration = true;
   };
 
-  # Old config's delta pager, gruvbox-ified to match everything else.
-  programs.lazygit.settings.git.pagers = [
-    { colorArg = "always"; pager = ''delta --dark --paging=never --syntax-theme="gruvbox-dark"''; }
-  ];
+  # Diffs through delta, same look as `git diff` in the shell. Also picked up by
+  # nvim's <leader>gg (snacks.lazygit loads this config.yml alongside its theme).
+  programs.lazygit = {
+    enable = true;
+    enableZshIntegration = false;  # skip the cd-on-exit shell wrapper
+    settings.git.pagers = [
+      { colorArg = "always"; pager = "delta --paging=never"; }
+    ];
+  };
 
   programs.fzf.enable = true;      # ctrl-r history, ctrl-t files, alt-c cd
   programs.zoxide.enable = true;   # `z` — frecency-ranked cd
