@@ -95,7 +95,8 @@
     onActivation.upgrade = true;  # every switch also upgrades; no separate brew chore
     # herdr: not in nixpkgs 26.05; formula tracks upstream better anyway.
     # libyaml: ruby-build (via mise) locates it with `brew --prefix` when compiling ruby.
-    brews = [ "herdr" "act" "libyaml" ];
+    # mysql-client, libpq: keg-only; `mysql`/`psql` CLIs and headers for native db drivers.
+    brews = [ "herdr" "act" "libyaml" "mysql-client" "libpq" ];
     casks = [
       "codex"                  # OpenAI's terminal coding agent
       "google-chrome"
