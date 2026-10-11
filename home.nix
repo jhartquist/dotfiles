@@ -242,7 +242,8 @@ in
   home.activation.installHerdrSplits = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     herdr=/opt/homebrew/bin/herdr
     if [ -x "$herdr" ] && ! "$herdr" plugin list 2>/dev/null | grep -qw "herdr-splits"; then
-      "$herdr" plugin install lmilojevicc/herdr-splits.nvim \
+      # herdr clones with git, absent from activation's minimal PATH
+      PATH="${lib.makeBinPath [ pkgs.git ]}:$PATH" "$herdr" plugin install lmilojevicc/herdr-splits.nvim \
         --ref 94f30cf4e9ac76ddf185a3acd0977be728fa4106 --yes \
         || echo "herdr-splits install failed; rerun: herdr plugin install lmilojevicc/herdr-splits.nvim"
     fi
