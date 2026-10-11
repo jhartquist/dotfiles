@@ -142,7 +142,7 @@ in
     };
     # See .gitattributes: strips per-machine keys from claude settings.json.
     settings.filter.claude-settings.clean =
-      "${pkgs.jq}/bin/jq --indent 2 'del(.model, .modelSettings, .effortLevel)'";
+      "${pkgs.jq}/bin/jq --indent 2 'del(.model, .modelSettings, .effortLevel, .autoMode)'";
     ignores = [
       "**/.claude/settings.local.json"
       "**/CLAUDE.local.md"
