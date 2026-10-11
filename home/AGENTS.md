@@ -16,3 +16,5 @@
 - Apply that same high standard to engineering excellence: lint, test failures, and test flakiness.
   If you see one, even if it is not caused by what you are working on right now, still get it fixed.
 - Before using "dynamic workflows", "ultra code" or any harness feature that immediately spawns a large swarm of subagents, always explain the tradeoffs and ask the user for explicit approval.
+
+For web-app work, always start and keep a preview server running. Bind to 0.0.0.0 and explicitly allow this machine's Tailscale hostname (`tailscale status --self`), without disabling host checks. Use an available port and verify the page responds through that hostname before sharing its URL. Never provide only a localhost preview link.
