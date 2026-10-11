@@ -1,4 +1,4 @@
-{ config, lib, pkgs, user, ... }:
+{ config, lib, pkgs, user, host, ... }:
 
 let
   dotfiles = "${config.home.homeDirectory}/.dotfiles";
@@ -126,11 +126,12 @@ in
     enable = true;
     settings.user = {
       name = "John Hartquist";
-      email = "john@hartquist.com";
+      inherit (host) email;
+    } // lib.optionalAttrs host.sign {
       signingkey = "${config.home.homeDirectory}/.ssh/id_ed25519.pub";
     };
-    settings.gpg.format = "ssh";
-    settings.commit.gpgsign = true;
+    settings.gpg.format = lib.mkIf host.sign "ssh";
+    settings.commit.gpgsign = host.sign;
     settings.init.defaultBranch = "main";
     # One line per commit: hash, date, author (padded/truncated to 7), refs, subject.
     settings.format.pretty = "%C(auto)%h %C(dim)%ad %C(cyan)%<(7,trunc)%an%C(reset)%C(auto)%d %s";
@@ -139,6 +140,9 @@ in
     settings.alias = {
       l = "log";
     };
+    # See .gitattributes: strips per-machine keys from claude settings.json.
+    settings.filter.claude-settings.clean =
+      "${pkgs.jq}/bin/jq --indent 2 'del(.model, .modelSettings, .effortLevel)'";
     ignores = [
       "**/.claude/settings.local.json"
       "**/CLAUDE.local.md"

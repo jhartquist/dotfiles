@@ -2,7 +2,12 @@
 # Fresh macOS → fully-configured machine, and every rebuild after. Idempotent.
 set -euo pipefail
 
-HOST="${HOST:-mac}"
+# Flake host (see `hosts` in flake.nix): first arg, else picked by username.
+case "${1:-$USER}" in
+  personal|work) HOST="$1" ;;
+  john) HOST=work ;;
+  *)             HOST=personal ;;
+esac
 LINK="$HOME/.dotfiles"                       # stable path home.nix resolves through
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 

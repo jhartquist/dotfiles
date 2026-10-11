@@ -15,12 +15,14 @@
 
   outputs = inputs@{ nixpkgs, nix-darwin, home-manager, nix-homebrew, ... }:
     let
-      user = "john";
-      host = "mac";  # flake label, not the hostname — one config can serve many Macs
-    in
-    {
-      darwinConfigurations.${host} = nix-darwin.lib.darwinSystem {
-        specialArgs = { inherit user; };
+      # Everything that differs between machines. rebuild.sh picks one by $USER.
+      hosts = {
+        personal = { user = "john";          email = "john@hartquist.com"; sign = false; };
+        work     = { user = "john"; email = "john@hartquist.com";       sign = true; };
+      };
+
+      mkDarwin = host: nix-darwin.lib.darwinSystem {
+        specialArgs = { inherit host; inherit (host) user; };
         modules = [
           ./configuration.nix
           nix-homebrew.darwinModules.nix-homebrew
@@ -30,18 +32,21 @@
             home-manager.useUserPackages = true;
             # Pre-existing files in the way get moved aside, not a failed switch.
             home-manager.backupFileExtension = "hm-backup";
-            home-manager.extraSpecialArgs = { inherit user; };
-            home-manager.users.${user}.imports = [ ./home.nix ./home-darwin.nix ];
+            home-manager.extraSpecialArgs = { inherit host; inherit (host) user; };
+            home-manager.users.${host.user}.imports = [ ./home.nix ./home-darwin.nix ];
           }
         ];
       };
+    in
+    {
+      darwinConfigurations = builtins.mapAttrs (_: mkDarwin) hosts;
 
       # Ubuntu deep-learning box: system stays vanilla apt (CUDA drivers etc.),
       # nix owns only the user environment. Applied by setup-ubuntu.sh.
-      homeConfigurations."${user}@ubuntu" =
+      homeConfigurations."john@ubuntu" =
         home-manager.lib.homeManagerConfiguration {
           pkgs = nixpkgs.legacyPackages.x86_64-linux;
-          extraSpecialArgs = { inherit user; };
+          extraSpecialArgs = { host = hosts.personal; inherit (hosts.personal) user; };
           modules = [ ./home.nix ./home-linux.nix ];
         };
     };

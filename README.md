@@ -24,8 +24,11 @@ Covers:
 ```sh
 git clone https://github.com/jhartquist/dotfiles.git ~/git/jhartquist/dotfiles
 cd ~/git/jhartquist/dotfiles
-./rebuild.sh
+./rebuild.sh            # host picked by $USER; or ./rebuild.sh personal|work
 ```
+
+Per-machine differences (user, git email, commit signing) live in the
+`hosts` attrset in `flake.nix`; everything else is shared.
 
 ## Ubuntu (home environment only)
 
