@@ -1,0 +1,3 @@
+# Model/effort are per-machine runtime choices (/model, /effort write them);
+# the clean filter (defined in home.nix) keeps them out of git.
+home/.claude/settings.json filter=claude-settings
