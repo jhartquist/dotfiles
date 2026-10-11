@@ -60,13 +60,22 @@
   # as a device-scoped hidutil agent rather than nix-darwin's
   # system.keyboard.userKeyMapping, because that option is global and would also
   # swap the built-in MacBook keyboard. 0x7000000E3 = left ⌘, 0x7000000E2 = left ⌥.
+  # Device-scoped mappings die with the device instance, so unplugging the dock
+  # and replugging silently reverts the swap; LaunchEvents re-fires the agent on
+  # every receiver attach. The sleep lets the HID services register before
+  # hidutil tries to match them.
   launchd.user.agents.mx-keys-swap-cmd-option.serviceConfig = {
     ProgramArguments = [
-      "/usr/bin/hidutil" "property"
-      "--matching" ''{"VendorID":0x46D,"ProductID":0xC548}''
-      "--set" ''{"UserKeyMapping":[{"HIDKeyboardModifierMappingSrc":0x7000000E3,"HIDKeyboardModifierMappingDst":0x7000000E2},{"HIDKeyboardModifierMappingSrc":0x7000000E2,"HIDKeyboardModifierMappingDst":0x7000000E3}]}''
+      "/bin/sh" "-c"
+      ''sleep 2; exec /usr/bin/hidutil property --matching '{"VendorID":0x46D,"ProductID":0xC548}' --set '{"UserKeyMapping":[{"HIDKeyboardModifierMappingSrc":0x7000000E3,"HIDKeyboardModifierMappingDst":0x7000000E2},{"HIDKeyboardModifierMappingSrc":0x7000000E2,"HIDKeyboardModifierMappingDst":0x7000000E3}]}' ''
     ];
     RunAtLoad = true;
+    LaunchEvents."com.apple.iokit.matching".mx-keys-receiver-attached = {
+      IOProviderClass = "IOUSBHostDevice";
+      idVendor = 1133;    # 0x46D
+      idProduct = 50504;  # 0xC548
+      IOMatchLaunchStream = true;
+    };
   };
 
   # nix-homebrew installs and owns Homebrew itself — nothing installs brew
