@@ -96,7 +96,7 @@
     # herdr: not in nixpkgs 26.05; formula tracks upstream better anyway.
     # libyaml: ruby-build (via mise) locates it with `brew --prefix` when compiling ruby.
     # mysql-client, libpq: keg-only; `mysql`/`psql` CLIs and headers for native db drivers.
-    brews = [ "herdr" "act" "libyaml" "mysql-client" "libpq" ];
+    brews = [ "herdr" "act" "libyaml" "mysql-client" "libpq" "vercel" ];
     casks = [
       "codex"                  # OpenAI's terminal coding agent
       "google-chrome"
