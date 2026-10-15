@@ -3,7 +3,7 @@ onboarding = false
 name = "gruvbox"
 
 # Follow the host terminal's light/dark appearance.
-auto_switch = true
+auto_switch = false
 
 [keys]
 # tmux: set -g prefix C-s
