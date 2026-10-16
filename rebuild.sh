@@ -2,12 +2,7 @@
 # Fresh macOS → fully-configured machine, and every rebuild after. Idempotent.
 set -euo pipefail
 
-# Flake host (see `hosts` in flake.nix): first arg, else picked by username.
-case "${1:-$USER}" in
-  personal|work) HOST="$1" ;;
-  john) HOST=work ;;
-  *)             HOST=personal ;;
-esac
+HOST="${1:-personal}"                        # entry in flake.nix `hosts`
 LINK="$HOME/.dotfiles"                       # stable path home.nix resolves through
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 
@@ -70,15 +65,31 @@ prof="/etc/profiles/per-user/$USER/bin"
 say "Bootstrapping toolchains"
 if [ -x "$prof/rustup" ]; then
   "$prof/rustup" show active-toolchain &>/dev/null \
-    || "$prof/rustup" default stable || echo "  rustup default stable failed — run it by hand"
+    || "$prof/rustup" default stable || echo "  rustup default stable failed - run it by hand"
   # rust-analyzer rides the toolchain (rustup's bin shim), not nix — see home.nix
   "$prof/rustup" component list --installed 2>/dev/null | grep -q rust-analyzer \
     || "$prof/rustup" component add rust-analyzer \
-    || echo "  rustup component add rust-analyzer failed — run it by hand"
+    || echo "  rustup component add rust-analyzer failed - run it by hand"
 fi
 if [ -x "$prof/fnm" ] && ! "$prof/fnm" list | grep -qE 'v[0-9]'; then
   "$prof/fnm" install --lts && "$prof/fnm" default lts-latest \
-    || echo "  fnm install --lts failed — run it by hand"
+    || echo "  fnm install --lts failed - run it by hand"
+fi
+# axi CLIs: Claude's SessionStart hooks (home/.claude/settings.json) call them.
+if [ -x "$prof/fnm" ]; then
+  eval "$("$prof/fnm" env)"
+  for t in gh-axi chrome-devtools-axi lavish-axi; do
+    have "$t" || npm install -g "$t" || echo "  npm install -g $t failed - run it by hand"
+  done
+fi
+# Claude plugins: install whatever settings.json enables.
+claude="$HOME/.local/bin/claude"
+if [ -x "$claude" ]; then
+  installed="$("$claude" plugin list 2>/dev/null || true)"
+  for p in $("$prof/jq" -r '.enabledPlugins | keys[]' "$DIR/home/.claude/settings.json"); do
+    grep -qF "$p" <<<"$installed" || "$claude" plugin install "$p" \
+      || echo "  claude plugin install $p failed - run it by hand"
+  done
 fi
 
 # Licensed fonts (Berkeley Mono etc.) live OUTSIDE the public repo, under

@@ -127,11 +127,7 @@ in
     settings.user = {
       name = "John Hartquist";
       inherit (host) email;
-    } // lib.optionalAttrs host.sign {
-      signingkey = "${config.home.homeDirectory}/.ssh/id_ed25519.pub";
     };
-    settings.gpg.format = lib.mkIf host.sign "ssh";
-    settings.commit.gpgsign = host.sign;
     settings.init.defaultBranch = "main";
     # One line per commit: hash, date, author (padded/truncated to 7), refs, subject.
     settings.format.pretty = "%C(auto)%h %C(dim)%ad %C(cyan)%<(7,trunc)%an%C(reset)%C(auto)%d %s";

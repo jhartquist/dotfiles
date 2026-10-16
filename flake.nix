@@ -15,10 +15,11 @@
 
   outputs = inputs@{ nixpkgs, nix-darwin, home-manager, nix-homebrew, ... }:
     let
-      # Everything that differs between machines. rebuild.sh picks one by $USER.
+      # Everything that differs between machines; one entry serves any number
+      # of Macs. Add e.g. `work = { user = "..."; email = "..."; };` for a job
+      # machine and run `./rebuild.sh work` there.
       hosts = {
-        personal = { user = "john";          email = "john@hartquist.com"; sign = false; };
-        work     = { user = "john"; email = "john@hartquist.com";       sign = true; };
+        personal = { user = "john"; email = "john@hartquist.com"; };
       };
 
       mkDarwin = host: nix-darwin.lib.darwinSystem {
