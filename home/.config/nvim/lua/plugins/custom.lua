@@ -83,6 +83,28 @@ return {
       { "<M-l>", function() require("herdr-splits").resize_right() end, desc = "Resize right" },
     },
   },
+  -- Lazygit float: LazyVim's terminal maps pass Ctrl+h/j/k/l through to
+  -- floating terminals, so herdr nav dead-ends in lazygit. Route them to
+  -- herdr-splits, which jumps from a float straight to the neighboring pane.
+  {
+    "snacks.nvim",
+    opts = function(_, opts)
+      if vim.env.HERDR_ENV ~= "1" then
+        return
+      end
+      local keys = {}
+      for key, dir in pairs({ h = "left", j = "down", k = "up", l = "right" }) do
+        keys["nav_" .. key] = {
+          "<C-" .. key .. ">",
+          function() require("herdr-splits")["move_cursor_" .. dir]() end,
+          mode = "t",
+          expr = false,
+          desc = "Navigate " .. dir,
+        }
+      end
+      opts.lazygit = vim.tbl_deep_extend("force", opts.lazygit or {}, { win = { keys = keys } })
+    end,
+  },
 
   -----------------------------------------------------------------------------
   -- COLORSCHEME
