@@ -1,5 +1,6 @@
 {
   "includeCoAuthoredBy": false,
+  "cleanupPeriodDays": 36500,
   "hooks": {
     "SessionStart": [
       {
@@ -42,10 +43,11 @@
     "lua-lsp@claude-plugins-official": true,
     "mattpocock-skills@claude-plugins-official": true
   },
+  "feedbackDrafts": "off",
   "tui": "fullscreen",
   "skipDangerousModePermissionPrompt": true,
   "skipWorkflowUsageWarning": true,
   "theme": "dark",
   "agentPushNotifEnabled": true,
-  "feedbackDrafts": "off"
+  "autoMemoryEnabled": false
 }
