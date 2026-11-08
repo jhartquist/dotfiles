@@ -57,6 +57,10 @@ in
   home.sessionPath = [
     "$HOME/.local/bin"
     "$HOME/.cargo/bin"   # `cargo install`ed tools
+    # fnm's default node, so non-interactive shells (agents T3 starts, Claude
+    # hooks calling the npm-installed axi CLIs) find node and npm globals.
+    # Interactive shells put the per-directory version ahead of it.
+    "$HOME/.local/share/fnm/aliases/default/bin"
   ];
 
   programs.zsh = {
@@ -234,9 +238,11 @@ in
 
   # herdr-splits: herdr half of the seamless pane/split nav plugin (nvim half
   # pinned in nvim/lazy-lock.json — keep this --ref on the same commit).
-  # Bootstrap once if missing; herdr manages it after that.
+  # Bootstrap once if missing; herdr manages it after that. herdr is brew's on
+  # the Mac, its installer's (~/.local/bin, see home-linux.nix) on Linux.
   home.activation.installHerdrSplits = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     herdr=/opt/homebrew/bin/herdr
+    [ -x "$herdr" ] || herdr="$HOME/.local/bin/herdr"
     if [ -x "$herdr" ] && ! "$herdr" plugin list 2>/dev/null | grep -qw "herdr-splits"; then
       # herdr clones with git, absent from activation's minimal PATH
       PATH="${lib.makeBinPath [ pkgs.git ]}:$PATH" "$herdr" plugin install lmilojevicc/herdr-splits.nvim \
