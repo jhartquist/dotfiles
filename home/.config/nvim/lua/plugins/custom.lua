@@ -41,11 +41,13 @@ return {
         desc = "Toggle Copilot",
       },
     },
+    -- copilot warns "copilot is disabled" on every buffer attach while off;
+    -- its only other warning is trivial, so print errors only
+    opts = { logger = { print_log_level = vim.log.levels.ERROR } },
     config = function(_, opts)
       require("copilot").setup(opts)
       -- start disabled; <leader>ai enables it on demand. Deferred a tick so
-      -- it runs after copilot's own scheduled buffer-attach (avoids a
-      -- "copilot is disabled" warning on startup).
+      -- it runs after setup's scheduled client start (else "copilot is offline")
       vim.schedule(function()
         vim.cmd("Copilot disable")
       end)
