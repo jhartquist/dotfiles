@@ -128,8 +128,8 @@ in
       inherit (host) email;
     };
     settings.init.defaultBranch = "main";
-    # One line per commit: hash, date, author (padded/truncated to 7), refs, subject.
-    settings.format.pretty = "%C(auto)%h %C(dim)%ad %C(cyan)%<(7,trunc)%an%C(reset)%C(auto)%d %s";
+    # One line per commit: hash, date, author, refs, subject.
+    settings.format.pretty = "%C(auto)%h %C(dim)%ad %C(cyan)%an%C(reset)%C(auto)%d %s";
     settings.log.abbrevCommit = true;
     settings.log.date = "format:%Y-%m-%d %H:%M";
     settings.alias = {
