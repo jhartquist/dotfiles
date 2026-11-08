@@ -8,3 +8,5 @@ home/.config/herdr/plugins/
 home/.config/herdr/release-notes.json
 .lavish/
 home/.claude/skills/synced/
+home/.config/herdr/*.sock.agent
+home/.config/herdr/session-snapshots/
