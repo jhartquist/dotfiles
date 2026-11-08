@@ -16,7 +16,6 @@ in
     jq        # json on the command line
     just      # task runner (ships its own zsh completions)
     bacon     # background rust code checker
-    lazygit   # git TUI
     neovim
 
     # Dev toolchains — these carry over to the Ubuntu box later, too.
@@ -153,6 +152,7 @@ in
   };
 
   # Old config's delta pager, gruvbox-ified to match everything else.
+  programs.lazygit.enable = true;   # git TUI; without this the settings below never get written
   programs.lazygit.settings.git.pagers = [
     { colorArg = "always"; pager = ''delta --dark --paging=never --syntax-theme="gruvbox-dark"''; }
   ];
