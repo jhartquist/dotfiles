@@ -62,12 +62,31 @@
   # swap the built-in MacBook keyboard. 0x7000000E3 = left ⌘, 0x7000000E2 = left ⌥.
   # Device-scoped mappings die with the device instance, so unplugging the dock
   # and replugging silently reverts the swap; LaunchEvents re-fires the agent on
-  # every receiver attach. The sleep lets the HID services register before
-  # hidutil tries to match them.
+  # every receiver attach. launchd keeps relaunching such a job until it takes
+  # the event off the stream, which a shell script can't (an `sh -c` version
+  # ran every 10s forever), so a tiny helper takes it, waits 2s for the HID
+  # services to register, then execs hidutil.
   launchd.user.agents.mx-keys-swap-cmd-option.serviceConfig = {
     ProgramArguments = [
-      "/bin/sh" "-c"
-      ''sleep 2; exec /usr/bin/hidutil property --matching '{"VendorID":0x46D,"ProductID":0xC548}' --set '{"UserKeyMapping":[{"HIDKeyboardModifierMappingSrc":0x7000000E3,"HIDKeyboardModifierMappingDst":0x7000000E2},{"HIDKeyboardModifierMappingSrc":0x7000000E2,"HIDKeyboardModifierMappingDst":0x7000000E3}]}' ''
+      "${pkgs.runCommandCC "iokit-event-then" { } ''
+        mkdir -p $out/bin
+        $CC -Wall -O2 -o $out/bin/iokit-event-then -x c - <<'EOF'
+        #include <dispatch/dispatch.h>
+        #include <unistd.h>
+        #include <xpc/xpc.h>
+        int main(int argc, char **argv) {
+          if (argc < 2) return 64;
+          xpc_set_event_stream_handler("com.apple.iokit.matching",
+              dispatch_get_main_queue(), ^(xpc_object_t e) { (void)e; });
+          dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 2 * NSEC_PER_SEC),
+              dispatch_get_main_queue(), ^{ execv(argv[1], argv + 1); _exit(127); });
+          dispatch_main();
+        }
+        EOF
+      ''}/bin/iokit-event-then"
+      "/usr/bin/hidutil" "property"
+      "--matching" ''{"VendorID":0x46D,"ProductID":0xC548}''
+      "--set" ''{"UserKeyMapping":[{"HIDKeyboardModifierMappingSrc":0x7000000E3,"HIDKeyboardModifierMappingDst":0x7000000E2},{"HIDKeyboardModifierMappingSrc":0x7000000E2,"HIDKeyboardModifierMappingDst":0x7000000E3}]}''
     ];
     RunAtLoad = true;
     LaunchEvents."com.apple.iokit.matching".mx-keys-receiver-attached = {
