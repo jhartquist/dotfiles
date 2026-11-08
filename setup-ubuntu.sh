@@ -52,6 +52,15 @@ else
   nix run home-manager/release-26.05 -- switch --flake "$LINK#$CONFIG" -b hm-backup
 fi
 
+# Login shell: nix's zsh, not apt's. zsh plugins from nix (fzf-tab) ship
+# compiled modules linked against nix's glibc, which apt's zsh can't load.
+zsh="$HOME/.nix-profile/bin/zsh"
+if [ "$(getent passwd "$USER" | cut -d: -f7)" != "$zsh" ]; then
+  say "Setting login shell to $zsh"
+  grep -qxF "$zsh" /etc/shells || echo "$zsh" | sudo tee -a /etc/shells >/dev/null
+  sudo chsh -s "$zsh" "$USER"
+fi
+
 # Toolchain *versions* are imperative — rustup/fnm install them, not nix. Do it
 # here, AFTER the switch, so a network hiccup can't fail the switch itself.
 prof="$HOME/.nix-profile/bin"
