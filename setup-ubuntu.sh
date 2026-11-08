@@ -27,7 +27,13 @@ fi
 
 # ~/.dotfiles indirection: home.nix's mkOutOfStoreSymlink paths resolve through
 # it. -n replaces the link instead of following it into the target directory.
-[ "$DIR" = "$LINK" ] || ln -sfn "$DIR" "$LINK"
+if [ "$DIR" != "$LINK" ]; then
+  # A real dir here (e.g. an old bare dotfiles repo) would get the link
+  # created inside it instead of replaced.
+  [ -L "$LINK" ] || [ ! -e "$LINK" ] || {
+    echo "$LINK exists and is not a symlink; move it aside and rerun." >&2; exit 1; }
+  ln -sfn "$DIR" "$LINK"
+fi
 
 # Flakes read the git tree, not the working dir — untracked files don't exist.
 untracked="$(git -C "$DIR" ls-files --others --exclude-standard -- '*.nix')"
